@@ -36,12 +36,16 @@ class Question
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
+    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: OpenQuest::class)]
+    private Collection $openQuests;
+
 
 
     public function __construct()
     {
         $this->multiChoiceQuests = new ArrayCollection();
         $this->fillBlankQuests = new ArrayCollection();
+        $this->openQuests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,6 +157,36 @@ class Question
     public function setContent(?string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OpenQuest>
+     */
+    public function getOpenQuests(): Collection
+    {
+        return $this->openQuests;
+    }
+
+    public function addOpenQuest(OpenQuest $openQuest): static
+    {
+        if (!$this->openQuests->contains($openQuest)) {
+            $this->openQuests->add($openQuest);
+            $openQuest->setIdQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOpenQuest(OpenQuest $openQuest): static
+    {
+        if ($this->openQuests->removeElement($openQuest)) {
+            // set the owning side to null (unless already changed)
+            if ($openQuest->getIdQuestion() === $this) {
+                $openQuest->setIdQuestion(null);
+            }
+        }
 
         return $this;
     }
