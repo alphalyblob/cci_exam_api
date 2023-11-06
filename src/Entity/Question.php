@@ -30,9 +30,13 @@ class Question
     #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: MultiChoiceQuest::class, orphanRemoval: true)]
     private Collection $multiChoiceQuests;
 
+    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: FillBlankQuest::class, orphanRemoval: true)]
+    private Collection $fillBlankQuests;
+
     public function __construct()
     {
         $this->multiChoiceQuests = new ArrayCollection();
+        $this->fillBlankQuests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -100,6 +104,36 @@ class Question
             // set the owning side to null (unless already changed)
             if ($multiChoiceQuest->getIdQuestion() === $this) {
                 $multiChoiceQuest->setIdQuestion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FillBlankQuest>
+     */
+    public function getFillBlankQuests(): Collection
+    {
+        return $this->fillBlankQuests;
+    }
+
+    public function addFillBlankQuest(FillBlankQuest $fillBlankQuest): static
+    {
+        if (!$this->fillBlankQuests->contains($fillBlankQuest)) {
+            $this->fillBlankQuests->add($fillBlankQuest);
+            $fillBlankQuest->setIdQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFillBlankQuest(FillBlankQuest $fillBlankQuest): static
+    {
+        if ($this->fillBlankQuests->removeElement($fillBlankQuest)) {
+            // set the owning side to null (unless already changed)
+            if ($fillBlankQuest->getIdQuestion() === $this) {
+                $fillBlankQuest->setIdQuestion(null);
             }
         }
 
