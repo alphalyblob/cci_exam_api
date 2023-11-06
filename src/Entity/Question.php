@@ -39,6 +39,11 @@ class Question
     #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: OpenQuest::class)]
     private Collection $openQuests;
 
+    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: Answer::class, orphanRemoval: true)]
+    private Collection $answers;
+
+
+
 
 
     public function __construct()
@@ -46,6 +51,7 @@ class Question
         $this->multiChoiceQuests = new ArrayCollection();
         $this->fillBlankQuests = new ArrayCollection();
         $this->openQuests = new ArrayCollection();
+        $this->answers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +196,38 @@ class Question
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Answer>
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(Answer $answer): static
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers->add($answer);
+            $answer->setIdQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(Answer $answer): static
+    {
+        if ($this->answers->removeElement($answer)) {
+            // set the owning side to null (unless already changed)
+            if ($answer->getIdQuestion() === $this) {
+                $answer->setIdQuestion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 
 
 }
