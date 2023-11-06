@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\QuestionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,6 +26,14 @@ class Question
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $label = null;
+
+    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: MultiChoiceQuest::class, orphanRemoval: true)]
+    private Collection $multiChoiceQuests;
+
+    public function __construct()
+    {
+        $this->multiChoiceQuests = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -62,6 +72,36 @@ class Question
     public function setLabel(string $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MultiChoiceQuest>
+     */
+    public function getMultiChoiceQuests(): Collection
+    {
+        return $this->multiChoiceQuests;
+    }
+
+    public function addMultiChoiceQuest(MultiChoiceQuest $multiChoiceQuest): static
+    {
+        if (!$this->multiChoiceQuests->contains($multiChoiceQuest)) {
+            $this->multiChoiceQuests->add($multiChoiceQuest);
+            $multiChoiceQuest->setIdQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMultiChoiceQuest(MultiChoiceQuest $multiChoiceQuest): static
+    {
+        if ($this->multiChoiceQuests->removeElement($multiChoiceQuest)) {
+            // set the owning side to null (unless already changed)
+            if ($multiChoiceQuest->getIdQuestion() === $this) {
+                $multiChoiceQuest->setIdQuestion(null);
+            }
+        }
 
         return $this;
     }
