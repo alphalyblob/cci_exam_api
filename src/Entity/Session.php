@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SessionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
@@ -25,6 +27,14 @@ class Session
 
     #[ORM\Column]
     private ?\DateTimeImmutable $endingAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'idSession', targetEntity: Exam::class, orphanRemoval: true)]
+    private Collection $exams;
+
+    public function __construct()
+    {
+        $this->exams = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +85,36 @@ class Session
     public function setEndingAt(\DateTimeImmutable $endingAt): static
     {
         $this->endingAt = $endingAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Exam>
+     */
+    public function getExams(): Collection
+    {
+        return $this->exams;
+    }
+
+    public function addExam(Exam $exam): static
+    {
+        if (!$this->exams->contains($exam)) {
+            $this->exams->add($exam);
+            $exam->setIdSession($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExam(Exam $exam): static
+    {
+        if ($this->exams->removeElement($exam)) {
+            // set the owning side to null (unless already changed)
+            if ($exam->getIdSession() === $this) {
+                $exam->setIdSession(null);
+            }
+        }
 
         return $this;
     }
