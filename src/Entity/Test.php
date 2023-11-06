@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TestRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TestRepository::class)]
@@ -38,6 +40,14 @@ class Test
     #[ORM\ManyToOne(inversedBy: 'tests')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Theme $idTheme = null;
+
+    #[ORM\OneToMany(mappedBy: 'idTest', targetEntity: Question::class, orphanRemoval: true)]
+    private Collection $questions;
+
+    public function __construct()
+    {
+        $this->questions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,6 +146,36 @@ class Test
     public function setIdTheme(?Theme $idTheme): static
     {
         $this->idTheme = $idTheme;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Question>
+     */
+    public function getQuestions(): Collection
+    {
+        return $this->questions;
+    }
+
+    public function addQuestion(Question $question): static
+    {
+        if (!$this->questions->contains($question)) {
+            $this->questions->add($question);
+            $question->setIdTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestion(Question $question): static
+    {
+        if ($this->questions->removeElement($question)) {
+            // set the owning side to null (unless already changed)
+            if ($question->getIdTest() === $this) {
+                $question->setIdTest(null);
+            }
+        }
 
         return $this;
     }
