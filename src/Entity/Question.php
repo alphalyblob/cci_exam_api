@@ -33,6 +33,11 @@ class Question
     #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: FillBlankQuest::class, orphanRemoval: true)]
     private Collection $fillBlankQuests;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $content = null;
+
+
+
     public function __construct()
     {
         $this->multiChoiceQuests = new ArrayCollection();
@@ -139,4 +144,18 @@ class Question
 
         return $this;
     }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): static
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+
 }
