@@ -42,6 +42,9 @@ class Question
     #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: Answer::class, orphanRemoval: true)]
     private Collection $answers;
 
+    #[ORM\OneToOne(mappedBy: 'idQuestion', cascade: ['persist', 'remove'])]
+    private ?Result $result = null;
+
 
 
 
@@ -223,6 +226,23 @@ class Question
                 $answer->setIdQuestion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getResult(): ?Result
+    {
+        return $this->result;
+    }
+
+    public function setResult(Result $result): static
+    {
+        // set the owning side of the relation if necessary
+        if ($result->getIdQuestion() !== $this) {
+            $result->setIdQuestion($this);
+        }
+
+        $this->result = $result;
 
         return $this;
     }

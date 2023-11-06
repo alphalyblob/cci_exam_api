@@ -25,6 +25,10 @@ class Answer
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
+    #[ORM\ManyToOne(inversedBy: 'idAnswer')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Result $result = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +66,18 @@ class Answer
     public function setContent(string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getResult(): ?Result
+    {
+        return $this->result;
+    }
+
+    public function setResult(?Result $result): static
+    {
+        $this->result = $result;
 
         return $this;
     }
