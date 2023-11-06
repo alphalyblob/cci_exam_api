@@ -33,8 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'idUser', cascade: ['persist', 'remove'])]
     private ?ProBackground $proBackground = null;
 
-    #[ORM\OneToOne(mappedBy: 'idUser', cascade: ['persist', 'remove'])]
-    private ?EducationalBackground $educationalBackground = null;
+    
 
     public function getId(): ?int
     {
@@ -136,23 +135,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->proBackground = $proBackground;
-
-        return $this;
-    }
-
-    public function getEducationalBackground(): ?EducationalBackground
-    {
-        return $this->educationalBackground;
-    }
-
-    public function setEducationalBackground(EducationalBackground $educationalBackground): static
-    {
-        // set the owning side of the relation if necessary
-        if ($educationalBackground->getIdUser() !== $this) {
-            $educationalBackground->setIdUser($this);
-        }
-
-        $this->educationalBackground = $educationalBackground;
 
         return $this;
     }
