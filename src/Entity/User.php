@@ -41,11 +41,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'idUser', targetEntity: Answer::class, orphanRemoval: true)]
     private Collection $answers;
 
+    #[ORM\ManyToMany(targetEntity: Test::class, inversedBy: 'users')]
+    private Collection $idTest;
+
    
 
     public function __construct()
     {
         $this->answers = new ArrayCollection();
+        $this->idTest = new ArrayCollection();
     }
 
     
@@ -197,6 +201,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $answer->setIdUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Test>
+     */
+    public function getIdTest(): Collection
+    {
+        return $this->idTest;
+    }
+
+    public function addIdTest(Test $idTest): static
+    {
+        if (!$this->idTest->contains($idTest)) {
+            $this->idTest->add($idTest);
+        }
+
+        return $this;
+    }
+
+    public function removeIdTest(Test $idTest): static
+    {
+        $this->idTest->removeElement($idTest);
 
         return $this;
     }

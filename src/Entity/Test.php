@@ -44,9 +44,13 @@ class Test
     #[ORM\OneToMany(mappedBy: 'idTest', targetEntity: Question::class, orphanRemoval: true)]
     private Collection $questions;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'idTest')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,6 +179,33 @@ class Test
             if ($question->getIdTest() === $this) {
                 $question->setIdTest(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addIdTest($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeIdTest($this);
         }
 
         return $this;
