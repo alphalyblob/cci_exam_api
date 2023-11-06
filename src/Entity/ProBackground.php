@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProBackgroundRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProBackgroundRepository::class)]
@@ -20,6 +22,14 @@ class ProBackground
     #[ORM\OneToOne(inversedBy: 'proBackground', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $idUser = null;
+
+    #[ORM\OneToMany(mappedBy: 'idProBackground', targetEntity: LastExperience::class, orphanRemoval: true)]
+    private Collection $lastExperiences;
+
+    public function __construct()
+    {
+        $this->lastExperiences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -46,6 +56,36 @@ class ProBackground
     public function setIdUser(User $idUser): static
     {
         $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LastExperience>
+     */
+    public function getLastExperiences(): Collection
+    {
+        return $this->lastExperiences;
+    }
+
+    public function addLastExperience(LastExperience $lastExperience): static
+    {
+        if (!$this->lastExperiences->contains($lastExperience)) {
+            $this->lastExperiences->add($lastExperience);
+            $lastExperience->setIdProBackground($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLastExperience(LastExperience $lastExperience): static
+    {
+        if ($this->lastExperiences->removeElement($lastExperience)) {
+            // set the owning side to null (unless already changed)
+            if ($lastExperience->getIdProBackground() === $this) {
+                $lastExperience->setIdProBackground(null);
+            }
+        }
 
         return $this;
     }
