@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\TestRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TestRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: TestRepository::class)]
 class Test
@@ -31,7 +32,7 @@ class Test
     private ?string $author = null;
 
     #[ORM\Column(length: 20, nullable: true)]
-    private ?string $time = null;
+    private ?int $time = null;
 
     #[ORM\ManyToOne(inversedBy: 'tests')]
     #[ORM\JoinColumn(nullable: false)]
@@ -51,6 +52,8 @@ class Test
     {
         $this->questions = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -118,12 +121,12 @@ class Test
         return $this;
     }
 
-    public function getTime(): ?string
+    public function getTime(): ?int
     {
         return $this->time;
     }
 
-    public function setTime(?string $time): static
+    public function setTime(?int $time): static
     {
         $this->time = $time;
 
