@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\TestRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,8 +31,8 @@ class Test
     #[ORM\Column(length: 120)]
     private ?string $author = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $time = null;
+    #[ORM\Column( nullable: true)]
+    private ?int $time = null;
 
     #[ORM\ManyToOne(inversedBy: 'tests')]
     #[ORM\JoinColumn(nullable: false)]
@@ -51,6 +52,9 @@ class Test
     {
         $this->questions = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->createdAt= new \DateTimeImmutable();
+        $this->updatedAt= new \DateTimeImmutable();
+        $this->author= "moi";
     }
 
     public function getId(): ?int
@@ -73,13 +77,6 @@ class Test
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
@@ -118,12 +115,12 @@ class Test
         return $this;
     }
 
-    public function getTime(): ?string
+    public function getTime(): ?int
     {
         return $this->time;
     }
 
-    public function setTime(?string $time): static
+    public function setTime(?int $time): static
     {
         $this->time = $time;
 
@@ -209,5 +206,17 @@ class Test
         }
 
         return $this;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->label;
     }
 }

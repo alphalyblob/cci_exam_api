@@ -27,7 +27,7 @@ class Question
     #[ORM\Column(type: Types::TEXT)]
     private ?string $label = null;
 
-    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: MultiChoiceQuest::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: MultiChoiceQuest::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $multiChoiceQuests;
 
     #[ORM\OneToMany(mappedBy: 'idQuestion', targetEntity: FillBlankQuest::class, orphanRemoval: true)]
@@ -246,8 +246,10 @@ class Question
 
         return $this;
     }
-
     
-
+    public function __toString()
+    {
+        return $this->label.' '.$this->content;
+    }
 
 }
